@@ -39,6 +39,11 @@ if [[ -z "$COMMIT_MSG" ]] && [[ "$N_COMMITS" -eq 1 ]]; then
 	exit 0
 fi
 
+if [[ -z "$COMMIT_MSG" ]]; then
+	echo "No commit message found"
+	exit 0
+fi
+
 USER_LOGIN=$(jq -r ".comment.user.login" "$GITHUB_EVENT_PATH")
 user_response=$(curl -s -H "${AUTH_HEADER}" -H "${API_HEADER}" \
 "${URI}/users/${USER_LOGIN}")
@@ -70,13 +75,9 @@ git remote add fork https://x-access-token:$COMMITTER_TOKEN@github.com/$HEAD_REP
 git fetch fork $HEAD_BRANCH
 
 git checkout -b $HEAD_BRANCH fork/$HEAD_BRANCH
-git reset --soft HEAD~$(($N_COMMITS-1))
+git reset --soft HEAD~$(($N_COMMITS))
 
-if [[ -z "$COMMIT_MSG" ]]; then
-	git commit --amend --no-edit
-else
-	git commit --amend -m "$COMMIT_MSG"
-fi
+git commit -m "$COMMIT_MSG"
 
 git push --force-with-lease fork $HEAD_BRANCH
 
