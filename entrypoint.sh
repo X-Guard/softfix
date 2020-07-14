@@ -75,7 +75,7 @@ git remote add fork https://x-access-token:$COMMITTER_TOKEN@github.com/$HEAD_REP
 git fetch fork $HEAD_BRANCH
 
 git checkout -b $HEAD_BRANCH fork/$HEAD_BRANCH
-git reset --soft HEAD~$(($N_COMMITS))
+git reset --soft develop
 
 git commit -m "$COMMIT_MSG"
 
